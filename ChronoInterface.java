@@ -63,14 +63,8 @@ public class ChronoInterface {
 	}
 	public void trig(String channel){
 		if(power.powerStatus())
-			if(channels.get(Integer.parseInt(channel)).trig()){
+			if(channels.get(Integer.parseInt(channel)).trig())
 				println("Triggered Channel "+channel);
-//				if(Integer.parseInt(channel)%2==0){
-//					runs.get(runNum).finish();}
-//				else{
-//					runs.get(runNum).start();
-//				}
-			}
 			else
 				println("Unable to Trigger Channel "+channel);		
 	}

@@ -10,29 +10,34 @@ public class ParGrpEvent implements Event{
 		startQueue = new ArrayList<Competitor>(8);
 		finishQueue = new ArrayList<Competitor>(8);
 		completed = new ArrayList<Competitor>(8);
+		for(int i=0;i<8;i++){
+			startQueue.add(null);
+			completed.add(null);
+		}
 		startTime=0;
 	}
 	
 	@Override
 	public boolean add(int competitorNo) {
 		Competitor temp=new Competitor(competitorNo);
-		if(startTime!=0||startQueue.contains(temp)||finishQueue.contains(temp)||completed.contains(temp))
+		int index = startQueue.indexOf(null); 
+		if(index==-1||startTime!=0||startQueue.contains(temp)||finishQueue.contains(temp)||completed.contains(temp))
 			return false;
-		startQueue.add(new Competitor(competitorNo));
+		startQueue.remove(index);
+		startQueue.add(index,new Competitor(competitorNo));
 		return true;
 	}
 
 	@Override
 	public void start(int channel) {
-		if(startTime==0){
+		if(startTime==0&&channel==1){
 			startTime=Time.systemTime.getRunningTime();
-			while(!startQueue.isEmpty()){
+			for(int i=0;i<8;i++){
 				Competitor temp=startQueue.remove(0);
-				if(temp!=null){
+				if(temp!=null)
 					temp.setStartTime(Time.systemTime.getRunningTime());
-					finishQueue.add(temp);
+				finishQueue.add(i,temp);
 				}
-			}
 		}
 		else
 			finish(channel);
@@ -40,40 +45,49 @@ public class ParGrpEvent implements Event{
 
 	@Override
 	public void finish(int channel) {
-		if(startTime!=0 && !finishQueue.isEmpty()){
+		if(startTime!=0 && finishQueue.get(channel-1)!=null){
 			Competitor temp=finishQueue.remove(channel-1);
 			finishQueue.add(channel-1, null);
 			if(temp!=null){
 				temp.setFinishTime(Time.systemTime.getRunningTime());
 				temp.setStartTime(startTime);
-				completed.add(temp);
 			}
+			completed.remove(channel-1);
+			completed.add(channel-1, temp);
 		}	
 	}
 
 	@Override
 	public void end() {
 		startQueue.clear();
-		while(!finishQueue.isEmpty())
-			dnf();
+		for(int i=0;i<finishQueue.size();i++){
+			if(finishQueue.get(i)!=null)
+				dnf();
+		}
 	}
 
 	@Override
 	public void dnf() {
 		Competitor temp;
-		temp=finishQueue.remove(0);
+		int index=completed.indexOf(null);
+		temp=finishQueue.remove(index);
+		finishQueue.add(index, null);
 		temp.dnf=true;
-		completed.add(temp);
+		completed.remove(index);
+		completed.add(index,temp);
 	}
 
 	@Override
 	public void cancel() {	
+		startTime=0;
 	}
 
 	@Override
 	public void clear(int num) {
 		Competitor temp=new Competitor(num);
-		startQueue.remove(temp);
+		int index=startQueue.indexOf(temp);
+		startQueue.remove(index);
+		startQueue.add(index, null);
 	}
 
 	@Override
@@ -94,27 +108,28 @@ public class ParGrpEvent implements Event{
 
 	@Override
 	public String displayUI() {
-		String runningt="\nRunning Time\t00:00.00";
+		String runningt="\nRunning Time\t00:00.00\n\n";
 		if(startTime>0){
-			runningt="\nRunning Time\t"+Time.systemTime.toString(Time.systemTime.getRunningTime()-startTime);
+			runningt="\nRunning Time\t"+Time.systemTime.toString(Time.systemTime.getRunningTime()-startTime)+"\n\n";
 	}
-		String starting="Racers Queued\n- - - - - - - - - - - - - - - - - - - - -";
-		for(int i=2; i>-1;i--){
-			if(startQueue.size()>i)
-				starting=starting+'\n'+startQueue.get(i).getCompetitorNumber()+"\t00:00.00";
+		String starting="Racers \n- - - - - - - - - - - - - - - - - - - - -";
+		for(int i=0; i<startQueue.size();i++){
+			if(startQueue.size()>i){
+				if(startQueue.get(i)!=null)
+				starting=starting+"\nLane "+(i+1)+": "+startQueue.get(i).getCompetitorNumber();
+			}
 		}
-		starting+=">"+'\n';
-		
-		String running="\nRunning Times\n- - - - - - - - - - - - - - - - - - - - - ";
 		for(int i=0; i<finishQueue.size(); i++){
-			running=running+'\n'+finishQueue.get(i).getCompetitorNumber()+'\t'+Time.systemTime.toString(Time.systemTime.getRunningTime()-finishQueue.get(i).getStartTime());
+			if(finishQueue.get(i)!=null)
+				starting=starting+"\nLane "+(i+1)+": "+finishQueue.get(i).getCompetitorNumber();
 		}
+		starting+='\n';
+		String finished="\nFinished Times\n- - - - - - - - - - - - - - - - - - - - - ";
+		for(int i=0; i<completed.size(); i++)
+			if(completed.get(i)!=null)
+				finished=finished+"\nLane "+(i+1)+": "+completed.get(i).getCompetitorNumber()+'\t'+(completed.get(i).dnf ? "DNF":Time.systemTime.toString((completed.get(i).getRaceTime())));
 		
-		String finished="\n\nFinished Times\n- - - - - - - - - - - - - - - - - - - - - ";
-		if(!completed.isEmpty())
-				finished="\n\nFinished Times\n- - - - - - - - - - - - - - - - - - - - - \n"+completed.get(completed.size()-1).getCompetitorNumber()+'\t'+(completed.get(completed.size()-1).dnf ? "DNF":Time.systemTime.toString((completed.get(completed.size()-1).getRaceTime())));
-		
-		return runningt+starting+running+finished;
+		return runningt+starting+finished;
 	}
 
 }

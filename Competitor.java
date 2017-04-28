@@ -37,6 +37,8 @@ public class Competitor implements Comparable<Object> {
 	}
 	@Override
 	public boolean equals(Object c){
+		if(c==null)
+			return false;
 		return ((Competitor)c).getCompetitorNumber()==this.competitorNo;
 	}
 	@Override

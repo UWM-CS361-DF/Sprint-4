@@ -295,8 +295,12 @@ public class GUI extends JFrame{
 		}
 		public void actionPerformed(ActionEvent e) {
 			if(n.equals("#")){
-				ChronoInterface.chronoTimer.num(num);
-				num="";
+				if(num.indexOf('.')!=-1)
+					num="";
+				else if(!num.equals("")){
+					ChronoInterface.chronoTimer.num(num);
+					num="";
+				}
 			}
 			else
 				num=num+n;

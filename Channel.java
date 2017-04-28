@@ -14,7 +14,8 @@ public class Channel{
 			return false;
 		else{
 			if(channelNo%2==0){
-				ChronoInterface.chronoTimer.runs.get(ChronoInterface.chronoTimer.runNum).finish(channelNo);}
+				ChronoInterface.chronoTimer.runs.get(ChronoInterface.chronoTimer.runNum).finish(channelNo);
+			}	
 			else{
 				ChronoInterface.chronoTimer.runs.get(ChronoInterface.chronoTimer.runNum).start(channelNo);
 			}

@@ -28,7 +28,7 @@ public class GrpEvent implements Event{
 
 	@Override
 	public void start(int channel) {
-		if(startTime==0)
+		if(startTime==0&&channel==1)
 			startTime=Time.systemTime.getRunningTime();
 	}
 
@@ -54,10 +54,11 @@ public class GrpEvent implements Event{
 
 	@Override
 	public void cancel() {	
+		startTime=0;
 	}
 
 	@Override
-	public void clear(int num) {
+	public void clear(int num) {//not used no racers to clear from queue
 	}
 
 	@Override
