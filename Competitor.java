@@ -1,14 +1,15 @@
 /*
  The competitor class :)
  This class defines the competitor object 
- Each competitor has its nunber, start time, and finish time. 
- The competitor object has also a boolean value 'dnf' which indicates whether the competitor "did not finish" the race! 😹
+ Each competitor has its number, start time, and finish time. 
+ The competitor object has also a boolean value 'dnf' which 
+ indicates whether the competitor "did not finish" the race
  */
 
 public class Competitor implements Comparable<Object> {
-	int competitorNo;
-	double startTime;
-	double finishTime;
+	private int competitorNo;
+	private double startTime;
+	private double finishTime;
 	boolean dnf;
 	
 	public Competitor(int competitorNo){

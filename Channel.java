@@ -1,15 +1,15 @@
 
 public class Channel{
-	Sensor sensorType;
-	public int channelNo;
-	public boolean isArmed;
+	private Sensor sensorType;
+	private int channelNo;
+	private boolean isArmed;
 
 	public Channel(int channelNo){
 		this.channelNo=channelNo;
 		isArmed=false;
 	}
-	
-	public boolean trig(){//judge whether the channels have been triggered
+	//triggers channel if channel is enabled
+	public boolean trig(){
 		if(!isArmed)
 			return false;
 		else{
@@ -22,15 +22,19 @@ public class Channel{
 			return true;
 		}
 	}
-	public boolean tog(){//toggle the channels states
+	//toggles enable/disable state
+	public boolean tog(){
 		isArmed=!isArmed;
 		return isArmed;
 	}
-	public Sensor conn(String sensor){//not used yet
+	
+	//creates the sensor being "connected" to the system
+	public Sensor conn(String sensor){
 		sensorType=new Sensor(sensor);
 		return sensorType;
 	}
-	public Sensor disc(){//not used yet
+	//disconnects the sensor replacing with null
+	public Sensor disc(){
 		sensorType=null;
 		return sensorType;
 	}

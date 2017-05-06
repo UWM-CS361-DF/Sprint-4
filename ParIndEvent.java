@@ -1,20 +1,21 @@
 import java.util.ArrayList;
 
+/*
+The ParIndEvent class
+This class defines the Parallel Individual Event
+*/
 public class ParIndEvent implements Event{
-	public ArrayList<Competitor> startQueue;// = new ArrayDeque<Competitor>();
-	public ArrayList<Competitor> finishQueue;// = new ArrayDeque<Competitor>();
-	public ArrayList<Competitor> completed;// = new ArrayDeque<Competitor>();
+	private ArrayList<Competitor> startQueue;
+	private ArrayList<Competitor> finishQueue;
+	private ArrayList<Competitor> completed;
 	
 	public ParIndEvent(){
 		startQueue = new ArrayList<Competitor>();
 		finishQueue = new ArrayList<Competitor>();
 		completed = new ArrayList<Competitor>();
 	}
-	
-	// if the start queue of the race is not empty
-	// take out the head of the start queue
-	// set the start time of the competitor
-	// put the competitor to the finish queue
+
+	//add a racer into the start queue
 	@Override
 	public boolean add(int competitorNo){
 		Competitor temp=new Competitor(competitorNo);
@@ -23,6 +24,9 @@ public class ParIndEvent implements Event{
 		startQueue.add(new Competitor(competitorNo));
 		return true;
 	}
+	/*if start queue is not empty, remove racer, set start time, 
+	 * and place in the queue to finish.
+	 */
 	@Override
 	public void start(int channel) {
 		if(!startQueue.isEmpty()){
@@ -31,10 +35,9 @@ public class ParIndEvent implements Event{
 			finishQueue.add(temp);
 		}
 	} 
-	// if the finish queue is not empty
-	// take out the head of the start queue
-	// set the finish time of the competitor
-	// put the competitor to the completed queue 
+	/*if finish queue is not empty, remove racer, set finish time, 
+	 * and place in the completed.
+	 */
 	@Override
 	public void finish(int channel) {
 		if(!finishQueue.isEmpty()){
@@ -43,39 +46,54 @@ public class ParIndEvent implements Event{
 			completed.add(temp);
 		}
 	}
+	/* clears the start queue of racers who did not start, and set the racers
+	 * who did not finish to DNF
+	 */
 	@Override
 	public void end() {
 		startQueue.clear();
 		while(!finishQueue.isEmpty())
 			dnf();		
 	}
+	/*set next racer in finish queue to DNF
+	 */
 	@Override
 	public void dnf(){
 		Competitor temp;
-		temp=finishQueue.remove(0);
-		temp.dnf=true;
-		completed.add(temp);
+		if(!finishQueue.isEmpty()){
+			temp=finishQueue.remove(0);
+			temp.dnf=true;
+			completed.add(temp);
+		}
 	}
+	/*cancels the last racer which started and places back into start queue
+	 */
 	@Override
 	public void cancel(){
 		startQueue.add(0,finishQueue.remove(finishQueue.size()-1));
 	}
+	//clears the racer with bib number
 	@Override
 	public void clear(int num){
-		
+		Competitor temp=new Competitor(num);
+		startQueue.remove(temp);
 	}
+	//no swap for PARIND
 	@Override
 	public boolean swap(){
 		return false;
 	}
+	//return the event type
 	@Override
 	public String getEventType(){
 		return "PARIND";
 	}
+	//returns the completed queue of racers
 	@Override
 	public ArrayList<Competitor> getCompleted(){
 		return completed;
 	}
+	//display for the PARIND event
 	public String displayUI(){
 		String starting="Racers Queued\n- - - - - - - - - - - - - - - - - - - - -";
 		for(int i=1; i>-1;i--){

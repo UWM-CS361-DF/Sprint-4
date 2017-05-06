@@ -1,22 +1,27 @@
 import java.util.ArrayList;
 
+/*
+The ParGrpEvent class
+This class defines the Parallel Grp Event
+*/
 public class ParGrpEvent implements Event{
-	public ArrayList<Competitor> startQueue;// = new ArrayDeque<Competitor>();
-	public ArrayList<Competitor> finishQueue;// = new ArrayDeque<Competitor>();
-	public ArrayList<Competitor> completed;// = new ArrayDeque<Competitor>();
-	private double startTime;
+	private ArrayList<Competitor> startQueue;
+	private ArrayList<Competitor> finishQueue;
+	private ArrayList<Competitor> completed;
+	private double startTime, finishTime;
 	
 	public ParGrpEvent(){
 		startQueue = new ArrayList<Competitor>(8);
 		finishQueue = new ArrayList<Competitor>(8);
-		completed = new ArrayList<Competitor>(8);
+		completed = new ArrayList<Competitor>(0);
 		for(int i=0;i<8;i++){
 			startQueue.add(null);
-			completed.add(null);
+			finishQueue.add(null);
 		}
 		startTime=0;
+		finishTime=0;
 	}
-	
+	//add a racer into the start queue to the next available lane
 	@Override
 	public boolean add(int competitorNo) {
 		Competitor temp=new Competitor(competitorNo);
@@ -27,61 +32,69 @@ public class ParGrpEvent implements Event{
 		startQueue.add(index,new Competitor(competitorNo));
 		return true;
 	}
-
+	//start the race running time. Same for all racers
 	@Override
 	public void start(int channel) {
 		if(startTime==0&&channel==1){
 			startTime=Time.systemTime.getRunningTime();
 			for(int i=0;i<8;i++){
-				Competitor temp=startQueue.remove(0);
-				if(temp!=null)
-					temp.setStartTime(Time.systemTime.getRunningTime());
-				finishQueue.add(i,temp);
+				//Competitor temp=startQueue.remove(0);
+				//if(temp!=null)
+				if(startQueue.get(i)!=null)
+					startQueue.get(i).setStartTime(Time.systemTime.getRunningTime());
+			//	finishQueue.add(i,temp);
 				}
 		}
 		else
 			finish(channel);
 	}
-
+	//set finish time for racer on channel that was triggered
 	@Override
 	public void finish(int channel) {
-		if(startTime!=0 && finishQueue.get(channel-1)!=null){
-			Competitor temp=finishQueue.remove(channel-1);
-			finishQueue.add(channel-1, null);
+		if(startTime!=0 && startQueue.get(channel-1)!=null){
+			Competitor temp=startQueue.remove(channel-1);
+			startQueue.add(channel-1, null);
 			if(temp!=null){
 				temp.setFinishTime(Time.systemTime.getRunningTime());
 				temp.setStartTime(startTime);
 			}
-			completed.remove(channel-1);
-			completed.add(channel-1, temp);
+			finishQueue.remove(channel-1);
+			finishQueue.add(channel-1, temp);
+			completed.add(temp);
 		}	
 	}
-
+	//endrun, set finish time, and dnf racers with no finish time
 	@Override
 	public void end() {
-		startQueue.clear();
-		for(int i=0;i<finishQueue.size();i++){
-			if(finishQueue.get(i)!=null)
+		finishTime=Time.systemTime.getRunningTime();
+		for(int i=0;i<startQueue.size();i++){
+			if(startQueue.get(i)!=null)
 				dnf();
 		}
 	}
-
+	//set finish time to DNF
 	@Override
 	public void dnf() {
 		Competitor temp;
-		int index=completed.indexOf(null);
-		temp=finishQueue.remove(index);
-		finishQueue.add(index, null);
-		temp.dnf=true;
-		completed.remove(index);
-		completed.add(index,temp);
+		int index=finishQueue.indexOf(null);
+		temp=startQueue.remove(index);
+		startQueue.add(index, null);
+		if(temp!=null){
+			temp.dnf=true;
+			finishQueue.remove(index);
+			finishQueue.add(index,temp);
+			completed.add(temp);
+		}
 	}
-
+	//cancel the race. set start time to zero
 	@Override
 	public void cancel() {	
 		startTime=0;
+		startQueue = new ArrayList<Competitor>(8);
+		finishQueue = new ArrayList<Competitor>(8);
+		completed = new ArrayList<Competitor>(0);
 	}
-
+	//clear racer with bib number for the queue
 	@Override
 	public void clear(int num) {
 		Competitor temp=new Competitor(num);
@@ -89,28 +102,28 @@ public class ParGrpEvent implements Event{
 		startQueue.remove(index);
 		startQueue.add(index, null);
 	}
-
+	//no swap for this event
 	@Override
 	public boolean swap() {
 		//not used for this event
 		return false;
 	}
-
+	//return the event type
 	@Override
 	public String getEventType() {
 		return "PARGRP";
 	}
-
+	//returns the completed queue of racers
 	@Override
 	public ArrayList<Competitor> getCompleted() {
 		return completed;
 	}
-
+	//display for the PARGRP event
 	@Override
 	public String displayUI() {
-		String runningt="\nRunning Time\t00:00.00\n\n";
+		String runningt="Running Time\t00:00.00\n\n";
 		if(startTime>0){
-			runningt="\nRunning Time\t"+Time.systemTime.toString(Time.systemTime.getRunningTime()-startTime)+"\n\n";
+			runningt="Running Time\t"+Time.systemTime.toString((finishTime!=0?finishTime:Time.systemTime.getRunningTime())-startTime)+"\n\n";
 	}
 		String starting="Racers \n- - - - - - - - - - - - - - - - - - - - -";
 		for(int i=0; i<startQueue.size();i++){
@@ -119,15 +132,11 @@ public class ParGrpEvent implements Event{
 				starting=starting+"\nLane "+(i+1)+": "+startQueue.get(i).getCompetitorNumber();
 			}
 		}
-		for(int i=0; i<finishQueue.size(); i++){
-			if(finishQueue.get(i)!=null)
-				starting=starting+"\nLane "+(i+1)+": "+finishQueue.get(i).getCompetitorNumber();
-		}
 		starting+='\n';
 		String finished="\nFinished Times\n- - - - - - - - - - - - - - - - - - - - - ";
 		for(int i=0; i<completed.size(); i++)
 			if(completed.get(i)!=null)
-				finished=finished+"\nLane "+(i+1)+": "+completed.get(i).getCompetitorNumber()+'\t'+(completed.get(i).dnf ? "DNF":Time.systemTime.toString((completed.get(i).getRaceTime())));
+				finished=finished+"\n"+completed.get(i).getCompetitorNumber()+'\t'+(completed.get(i).dnf ? "DNF":Time.systemTime.toString((completed.get(i).getRaceTime())));
 		
 		return runningt+starting+finished;
 	}

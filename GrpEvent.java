@@ -1,17 +1,22 @@
 import java.util.ArrayList;
 
+/*GRP Event. The racers have one start and multiple finishes
+ * on channel 2. Each finish receives a place holder 001, 002, etc
+ * until the race is ended and bib numbers can be assigned 
+ */
 public class GrpEvent implements Event{
-	public ArrayList<Competitor> startQueue;// = new ArrayDeque<Competitor>();
-	public ArrayList<Competitor> finishQueue;// = new ArrayDeque<Competitor>();
-	public ArrayList<Competitor> completed;// = new ArrayDeque<Competitor>();
-	private double startTime;
+	private ArrayList<Competitor> completed;
+	private double startTime,finishTime;
 
 	public GrpEvent(){
-		startQueue = new ArrayList<Competitor>();
-		finishQueue = new ArrayList<Competitor>();
 		completed = new ArrayList<Competitor>();
 		startTime=0;
+		finishTime=0;
 	}
+	
+	/*add will only be allowed if the run is ended and all times 
+	*have not been assigned yet. 
+	*/
 	@Override
 	public boolean add(int competitorNo) {
 		Competitor temp=new Competitor(competitorNo);
@@ -25,13 +30,13 @@ public class GrpEvent implements Event{
 		}
 		return false;
 	}
-
+	//start the race running time
 	@Override
 	public void start(int channel) {
 		if(startTime==0&&channel==1)
 			startTime=Time.systemTime.getRunningTime();
 	}
-
+	//add new finish time to completed queue
 	@Override
 	public void finish(int channel) {
 		Competitor temp=new Competitor(-(completed.size()+1));
@@ -39,46 +44,49 @@ public class GrpEvent implements Event{
 		temp.setStartTime(startTime);
 		completed.add(temp);
 	}
+	//endrun and set finish time
 	@Override
 	public void end() {
-		startQueue.clear();
-		while(!finishQueue.isEmpty())
-			dnf();		
+		finishTime=Time.systemTime.getRunningTime();		
 	}
+	//if race is not ended dnf a race time  
 	@Override
 	public void dnf() {
-		Competitor temp=new Competitor(-(completed.size()+1));
-		temp.dnf=true;
-		completed.add(temp);
+		if(finishTime==0){
+			Competitor temp=new Competitor(-(completed.size()+1));
+			temp.dnf=true;
+			completed.add(temp);
+		}
 	}
-
+	//cancel removes the last finish time
 	@Override
-	public void cancel() {	
-		startTime=0;
+	public void cancel() {
+		completed.remove(completed.size()-1);
 	}
-
+	//no clear for GRP event
 	@Override
 	public void clear(int num) {//not used no racers to clear from queue
 	}
-
+	//no swap for GRP event
 	@Override
 	public boolean swap() {
 		return false;	
 	}
-
+	//return the event type
 	@Override
 	public String getEventType() {
 		return "GRP";
 	}
-
+	//returns the completed queue of racers
 	@Override
 	public ArrayList<Competitor> getCompleted() {
 		return completed;
 	}
+	//display for the GRP event
 	public String displayUI(){	
-		String running="\nRunning Time\t00:00.00";
+		String running="Running Time\t00:00.00";
 		if(startTime>0){
-			running="\nRunning Time\t"+Time.systemTime.toString(Time.systemTime.getRunningTime()-startTime);
+			running="Running Time\t"+Time.systemTime.toString((finishTime!=0?finishTime:Time.systemTime.getRunningTime())-startTime);
 	}
 		
 		String finished="\n\nFinished Times\n- - - - - - - - - - - - - - - - - - - - -\n ";

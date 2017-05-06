@@ -1,9 +1,8 @@
 import java.util.ArrayList;
-
+/* Event is a simple interface for the different
+ * event types IND, PARIND, GRP, PARGRP
+ */
 public interface Event{
-//	public ArrayList<Competitor> startQueue = new ArrayList<Competitor>();
-//	public ArrayList<Competitor> finishQueue = new ArrayList<Competitor>();
-//	public ArrayList<Competitor> completed = new ArrayList<Competitor>();
 	public boolean add(int competitorNo);
 	public void start(int channel);
 	public void finish(int channel);

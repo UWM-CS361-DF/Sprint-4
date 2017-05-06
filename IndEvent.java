@@ -1,14 +1,13 @@
 import java.util.ArrayList;
 
 /*
- The IndEvent class :) 
- This class defines the Individual Event object 🎎🤡
- 
+ The IndEvent class
+ This class defines the Individual Event 
  */
-public class IndEvent implements Event{//extends ChronoInterface implements Event{
-	public ArrayList<Competitor> startQueue;// = new ArrayDeque<Competitor>();
-	public ArrayList<Competitor> finishQueue;// = new ArrayDeque<Competitor>();
-	public ArrayList<Competitor> completed;// = new ArrayDeque<Competitor>();
+public class IndEvent implements Event{
+	private ArrayList<Competitor> startQueue;
+	private ArrayList<Competitor> finishQueue;
+	private ArrayList<Competitor> completed;
 	
 	public IndEvent(){
 		startQueue = new ArrayList<Competitor>();
@@ -16,10 +15,7 @@ public class IndEvent implements Event{//extends ChronoInterface implements Even
 		completed = new ArrayList<Competitor>();
 	}
 	
-	// if the start queue of the race is not empty
-	// take out the head of the start queue
-	// set the start time of the competitor
-	// put the competitor to the finish queue
+	//add a racer into the start queue
 	@Override
 	public boolean add(int competitorNo){
 		Competitor temp=new Competitor(competitorNo);
@@ -28,6 +24,9 @@ public class IndEvent implements Event{//extends ChronoInterface implements Even
 		startQueue.add(new Competitor(competitorNo));
 		return true;
 	}
+	/*if start queue is not empty, remove racer, set start time, 
+	 * and place in the queue to finish.
+	 */
 	@Override
 	public void start(int channel) {
 		if(!startQueue.isEmpty()){
@@ -36,10 +35,9 @@ public class IndEvent implements Event{//extends ChronoInterface implements Even
 			finishQueue.add(temp);
 		}
 	} 
-	// if the finish queue is not empty
-	// take out the head of the start queue
-	// set the finish time of the competitor
-	// put the competitor to the completed queue 
+	/*if finish queue is not empty, remove racer, set finish time, 
+	 * and place in the completed.
+	 */
 	@Override
 	public void finish(int channel) {
 		if(!finishQueue.isEmpty()){
@@ -48,36 +46,49 @@ public class IndEvent implements Event{//extends ChronoInterface implements Even
 			completed.add(temp);
 		}
 	}
+	/* clears the start queue of racers who did not start, and set the racers
+	 * who did not finish to DNF
+	 */
 	@Override
 	public void end() {
 		startQueue.clear();
 		while(!finishQueue.isEmpty())
 			dnf();	
 	}
+	/*set next racer in finish queue to DNF
+	 */
 	@Override
 	public void dnf(){
 		Competitor temp;
-		temp=finishQueue.remove(0);
-		temp.dnf=true;
-		completed.add(temp);
+		if(!finishQueue.isEmpty()){
+			temp=finishQueue.remove(0);
+			temp.dnf=true;
+			completed.add(temp);
+		}
 	}
+	/*cancels the last racer which started and places back into start queue
+	 */
 	@Override
 	public void cancel(){
 		startQueue.add(0,finishQueue.remove(finishQueue.size()-1));
 	}
+	//return the event type
 	@Override
 	public String getEventType(){
 		return "IND";
 	}
+	//returns the completed queue of racers
 	@Override
 	public ArrayList<Competitor> getCompleted(){
 		return completed;
 	}
+	//clears the racer with bib number
 	@Override
 	public void clear(int num){
 		Competitor temp=new Competitor(num);
 		startQueue.remove(temp);
 	}
+	//swaps the next 2 racers to finish
 	@Override
 	public boolean swap(){
 		if(finishQueue.size()<2)
@@ -88,6 +99,7 @@ public class IndEvent implements Event{//extends ChronoInterface implements Even
 		finishQueue.add(0,temp2);
 		return true;
 	}
+	//display for the IND event
 	public String displayUI(){
 		String starting="Racers Queued\n- - - - - - - - - - - - - - - - - - - - -";
 		for(int i=2; i>-1;i--){

@@ -2,9 +2,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import com.google.gson.Gson;
 
+/*Export creates a file of the race output
+ * as a JSON string
+ */
 public class Export {
-	Gson g = new Gson();
-	String json;
+	private Gson g = new Gson();
+	private String json;
 	
 	public Export(Event run, int runNum) throws Exception{
 		FileWriter file = new FileWriter("RUN"+runNum+".txt");

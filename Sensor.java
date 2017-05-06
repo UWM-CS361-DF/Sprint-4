@@ -1,7 +1,11 @@
 public class Sensor {
-	
+	/*
+	 * Determines the type of sensor was connected. If pad sensor
+	 * was connected then an emulator will appear to simulate the
+	 * sensor per Sprint 4 requirements.
+	 */
 	public enum SensorType {GATE, EYE, PAD, MANUAL;}
-	public SensorType sensorType;
+	private SensorType sensorType;
 	
 
 	public Sensor(String sensor) {

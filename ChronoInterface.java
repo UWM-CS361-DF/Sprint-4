@@ -1,28 +1,24 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-
-//******************************************************
-// The ChronoInterface class acts as a literal interface
-// for the ChronoTimer. This has all of the methods that
-// could be directly related to the interface buttons to 
-// generate a command.(i.e the tog "button" is pressed
-// it relates to tog() method. The chronoInterface then 
-// determines what to do with the information provided
-//******************************************************
+/******************************************************
+*The ChronoInterface class acts as a literal interface
+for the ChronoTimer. This has all of the methods that
+could be directly related to the interface buttons to 
+generate a command.(i.e the tog "button" is pressed
+it relates to tog() method. The chronoInterface then 
+determines what to do with the information provided
+/****************************************************/
 
 public class ChronoInterface {
 	public static ChronoInterface chronoTimer;// = new ChronoInterface();
-	List<Channel> channels = new ArrayList<Channel>(9);//0 will be an empty channel location for ease of assigning
-	Power power = new Power();
-	boolean runInProgress=true;
-	int runNum=1;
-	ArrayList<Event> runs= new ArrayList<Event>();
-	Gson g = new Gson();
-	String json;
-	GUI gui;
-	boolean printerPower;
+	private List<Channel> channels = new ArrayList<Channel>(9);//0 will be an empty channel location for ease of assigning
+	protected boolean runInProgress=true;
+	protected int runNum=1;
+	protected ArrayList<Event> runs= new ArrayList<Event>();
+	protected GUI gui;
+	protected boolean powerStatus;
+	private boolean printerPower;
 
 	public ChronoInterface(GUI gui){
 		channels.add(0,null);
@@ -33,10 +29,12 @@ public class ChronoInterface {
 		runs.add(runNum, new IndEvent());
 		Time.systemTime.setTime();
 		this.gui=gui;
+		powerStatus=false;
 		printerPower=false;
 	}
 	public void power(){
-		if(power.power())
+		powerStatus=!powerStatus;
+		if(powerStatus)
 			println("Power On");
 		else{
 			println("Power Off");
@@ -44,41 +42,41 @@ public class ChronoInterface {
 		}		
 	}
 	public void time(String time){
-		if(power.powerStatus()){
+		if(powerStatus){
 			Time.systemTime.setTime(Time.systemTime.toSeconds(time));
 			println("Set Time to "+ Time.systemTime.toString(Time.systemTime.getRunningTime()));
 		}
 	}
 	public void dnf(){
-		if(power.powerStatus())
+		if(powerStatus)
 			runs.get(runNum).dnf();
 	}
 	public void cancel(){
-		if(power.powerStatus())
+		if(powerStatus)
 			runs.get(runNum).cancel();
 	}
 	public void tog(String channel){
-		if(power.powerStatus())
+		if(powerStatus)
 			println(channels.get(Integer.parseInt(channel)).tog() ? "Channel "+channel+" is Armed" : "Channel "+channel+" is not Armed");
 	}
 	public void trig(String channel){
-		if(power.powerStatus())
+		if(powerStatus)
 			if(channels.get(Integer.parseInt(channel)).trig())
 				println("Triggered Channel "+channel);
 			else
 				println("Unable to Trigger Channel "+channel);		
 	}
 	public void start(){
-		if(power.powerStatus())
+		if(powerStatus)
 			trig("1");
 	}
 	public void finish(){
-		if(power.powerStatus())
+		if(powerStatus)
 			trig("2");
 	}
 	public void conn(String sensor, String channel){
 		//String sensorType="";
-		if(power.powerStatus()){
+		if(powerStatus){
 			String sensorType=""+channels.get(Integer.parseInt(channel)).conn(sensor).getSensorType();
 			if(!sensorType.equals(null))
 				println("Connected "+sensorType+" Sensor to Channel "+channel);
@@ -88,7 +86,7 @@ public class ChronoInterface {
 	}
 	public void disc(String channel){
 		Sensor sensorType;
-		if(power.powerStatus()){
+		if(powerStatus){
 			sensorType=channels.get(Integer.parseInt(channel)).disc();
 			if(sensorType==null)
 				println("Disconnected Sensor from Channel "+channel);
@@ -97,7 +95,7 @@ public class ChronoInterface {
 		}
 	}
 	public void event(String type){
-		if(power.powerStatus()){
+		if(powerStatus){
 			runs.remove(runNum);
 			switch (type) {
 			case "IND":
@@ -121,7 +119,7 @@ public class ChronoInterface {
 		}
 	}
 	public void newrun(){
-		if(power.powerStatus())
+		if(powerStatus)
 			if(!runInProgress){
 				runNum++;
 				runs.add(runNum, new IndEvent());
@@ -132,7 +130,7 @@ public class ChronoInterface {
 				println("Run "+runNum+" Still In Progress");
 	}
 	public void endrun() throws Exception{
-		if(power.powerStatus()){
+		if(powerStatus){
 			runs.get(runNum).end();
 			new Export(runs.get(runNum),runNum);
 			runInProgress=false;
@@ -140,7 +138,7 @@ public class ChronoInterface {
 		}
 	}
 	public void print(){
-		if(power.powerStatus())
+		if(powerStatus)
 			new Print(runs);
 	}
 	public void printer(){
@@ -148,21 +146,21 @@ public class ChronoInterface {
 		println(printerPower? "Printer Powering On": "Printer Powering Off");
 	}
 	public void export(String run) throws Exception{
-		if(power.powerStatus()){
+		if(powerStatus){
 			new Export(runs.get(runNum),runNum);
 			runInProgress=false;
 		}
 	}
 	public void num(String number){
-		if(power.powerStatus())
+		if(powerStatus)
 			println(runs.get(runNum).add(Integer.parseInt(number)) ? "Added "+number+" to Race queue": "Failed to add "+number+" to Race queue");
 	}
 	public void clr(String number){
-		if(power.powerStatus())
+		if(powerStatus)
 			runs.get(runNum).clear(Integer.parseInt(number));
 	}
 	public void swap(){
-		if(power.powerStatus())
+		if(powerStatus)
 			runs.get(runNum).swap();
 	}
 	public void println(String out){
@@ -176,6 +174,6 @@ public class ChronoInterface {
 			gui.output(out);
 	}
 	public String displayRun(){
-		return runs.get(runNum).displayUI();
+		return "Race "+runNum+'\n'+runs.get(runNum).displayUI();
 	}
 }
