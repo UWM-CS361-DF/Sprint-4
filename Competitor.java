@@ -11,9 +11,17 @@ public class Competitor implements Comparable<Object> {
 	private double startTime;
 	private double finishTime;
 	boolean dnf;
+	private String name;
 	
 	public Competitor(int competitorNo){
 		this.competitorNo = competitorNo;
+	}
+	public Competitor(int competitorNo, String name){
+		this.competitorNo = competitorNo;
+		this.name=name;
+	}
+	public String getName(){
+		return name;
 	}
 	public void setStartTime(double time){
 		startTime = time;
@@ -28,7 +36,7 @@ public class Competitor implements Comparable<Object> {
 		return finishTime;
 	}
 	public double getRaceTime(){
-		return finishTime-startTime;
+		return Double.parseDouble(Time.systemTime.toString(finishTime-startTime));
 	}
 	public int getCompetitorNumber(){
 		return competitorNo;

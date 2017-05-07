@@ -16,7 +16,7 @@ public class Print {
 				if(competitor!=null){
 					int tempBib=competitor.getCompetitorNumber();
 					ChronoInterface.chronoTimer.print(tempBib<0 ? String.format("%05d", -tempBib)+ "\t": tempBib+ "\t");
-					ChronoInterface.chronoTimer.println(competitor.dnf ? "DNF" : Time.systemTime.toString(competitor.getRaceTime()));
+					ChronoInterface.chronoTimer.println(competitor.dnf ? "DNF" : ""+competitor.getRaceTime());
 				}
 			}
 		}

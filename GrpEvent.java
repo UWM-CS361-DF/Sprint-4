@@ -52,7 +52,7 @@ public class GrpEvent implements Event{
 	//if race is not ended dnf a race time  
 	@Override
 	public void dnf() {
-		if(finishTime==0){
+		if(startTime !=0 && finishTime==0){
 			Competitor temp=new Competitor(-(completed.size()+1));
 			temp.dnf=true;
 			completed.add(temp);

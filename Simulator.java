@@ -40,7 +40,8 @@ public class Simulator {
 		String stringTime;
 		
 		GUI gui = new GUI();
-		gui.setTitle("Top View");
+		new Export(new IndEvent(), 0);
+		gui.setTitle("ChronoTimer 1009");
 		gui.setSize(800,600);
 		gui.setVisible(true);
 		ChronoInterface.chronoTimer=new ChronoInterface(gui);
