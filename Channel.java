@@ -30,11 +30,12 @@ public class Channel{
 	
 	//creates the sensor being "connected" to the system
 	public Sensor conn(String sensor){
-		sensorType=new Sensor(sensor);
+		sensorType=new Sensor(sensor, channelNo);
 		return sensorType;
 	}
 	//disconnects the sensor replacing with null
 	public Sensor disc(){
+		sensorType.disc();
 		sensorType=null;
 		return sensorType;
 	}

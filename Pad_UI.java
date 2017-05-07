@@ -1,31 +1,20 @@
 import java.awt.Color;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 public class Pad_UI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				Pad_UI pad = new Pad_UI();
-				pad.setTitle("Pad Sensor");
-				pad.setSize(300,200);
-				pad.setVisible(true);
-				pad.setResizable(false);
-			}
-		});
-	}
 	
-	public Pad_UI(){
+	public Pad_UI(int channelNo){
 		JFrame frame = new JFrame();
 
 		JPanel contentPane = new JPanel();
@@ -43,12 +32,21 @@ public class Pad_UI extends JFrame {
 			}
 			else{
 				buttonPane.setLayout(new GridLayout(1,1));
-				JButton padButton = new JButton("PAD");
+				JButton padButton = new JButton(channelNo+" PAD");
 				padButton.setForeground(Color.BLUE);;
+				padButton.addActionListener(new SensorTrigListener(channelNo));
 				buttonPane.add(padButton);
 			}
 			contentPane.add(buttonPane);
 		}
 	}
-	
+	private class SensorTrigListener implements ActionListener {
+			String channel;
+			SensorTrigListener(int i){
+				channel = String.valueOf(i);
+			}
+			public void actionPerformed(ActionEvent e) {
+				ChronoInterface.chronoTimer.trig(channel);
+			}
+	}
 }

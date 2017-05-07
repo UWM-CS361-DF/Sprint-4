@@ -1,3 +1,4 @@
+
 public class Sensor {
 	/*
 	 * Determines the type of sensor was connected. If pad sensor
@@ -6,9 +7,8 @@ public class Sensor {
 	 */
 	public enum SensorType {GATE, EYE, PAD, MANUAL;}
 	private SensorType sensorType;
-	
-
-	public Sensor(String sensor) {
+	private Pad_UI pad;
+	public Sensor(String sensor, int channelNo) {
 		switch (sensor) {
 		case "Gate":
 			setSensorType(SensorType.GATE);
@@ -18,6 +18,11 @@ public class Sensor {
 			return;
 		case "Pad":
 			setSensorType(SensorType.PAD);
+			pad = new Pad_UI(channelNo);
+			pad.setTitle("Channel "+channelNo+" Sensor");
+			pad.setSize(300,200);
+			pad.setVisible(true);
+			pad.setResizable(false);
 			return;
 		case "Manual":
 			setSensorType(SensorType.MANUAL);
@@ -29,5 +34,8 @@ public class Sensor {
 	}
 	public void setSensorType(SensorType sensorType) {
 		this.sensorType = sensorType;
+	}
+	public void disc(){
+		pad.setVisible(false);
 	}
 }
