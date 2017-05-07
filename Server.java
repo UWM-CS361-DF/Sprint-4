@@ -16,7 +16,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class Server {
-	static ArrayList<Competitor> racers;
+	static ArrayList<Competitor> racers= new ArrayList<Competitor>();;
     // shared response for post data
     static String sharedResponse = "";
     static boolean gotMessageFlag = false;

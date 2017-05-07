@@ -7,8 +7,10 @@ public class Sensor {
 	 */
 	public enum SensorType {GATE, EYE, PAD, MANUAL;}
 	private SensorType sensorType;
-	private Pad_UI pad;
+	private Sensor_UI sensor_UI;
+	private int channelNo;
 	public Sensor(String sensor, int channelNo) {
+		this.channelNo=channelNo;
 		switch (sensor) {
 		case "Gate":
 			setSensorType(SensorType.GATE);
@@ -18,11 +20,6 @@ public class Sensor {
 			return;
 		case "Pad":
 			setSensorType(SensorType.PAD);
-			pad = new Pad_UI(channelNo);
-			pad.setTitle("Channel "+channelNo+" Sensor");
-			pad.setSize(300,200);
-			pad.setVisible(true);
-			pad.setResizable(false);
 			return;
 		case "Manual":
 			setSensorType(SensorType.MANUAL);
@@ -34,8 +31,13 @@ public class Sensor {
 	}
 	public void setSensorType(SensorType sensorType) {
 		this.sensorType = sensorType;
+		sensor_UI = new Sensor_UI(channelNo, this);
+		sensor_UI.setTitle("Channel "+channelNo+" Sensor");
+		sensor_UI.setSize(300,200);
+		sensor_UI.setVisible(true);
+		sensor_UI.setResizable(false);
 	}
 	public void disc(){
-		pad.setVisible(false);
+		sensor_UI.setVisible(false);
 	}
 }
