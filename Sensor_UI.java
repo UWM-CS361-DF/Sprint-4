@@ -1,9 +1,7 @@
 import java.awt.Color;
-
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,7 +20,7 @@ public class Sensor_UI extends JFrame {
 		frame.add(contentPane);
 		setLocationRelativeTo(null);
 		this.setContentPane(contentPane);
-		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
 		for(int i = 1; i < 10; i++){
 			JPanel buttonPane = new JPanel();

@@ -16,11 +16,10 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class Server {
-	static ArrayList<Competitor> racers= new ArrayList<Competitor>();;
+	static ArrayList<Competitor> racers= new ArrayList<Competitor>();
     // shared response for post data
     static String sharedResponse = "";
     static boolean gotMessageFlag = false;
-    static ArrayList<Competitor> employee = new ArrayList<Competitor>();
     public static void main(String args[]) throws Exception {
     	Scanner scIn;
     	racers= new ArrayList<Competitor>();
@@ -39,7 +38,7 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
         // Displays results
-        server.createContext("/displayresults", new DisplayHandler());
+        server.createContext("/results", new DisplayHandler());
 
         // Gets requests
         server.createContext("/sendresults",new PostHandler());
@@ -75,8 +74,9 @@ public class Server {
 			      //  int index;
 			        for(Competitor e : fromJson) {
 			        	int index=racers.indexOf(e);
+			        	int tempBib=e.getCompetitorNumber();
 			        	response += "<tr>";
-			        	response += "<td>" +i+"</td><td>"+e.getCompetitorNumber() + "</td><td>" + (index!=-1?racers.get(index).getName():"")+"</td><td>"+(e.dnf ? "DNF" : ""+e.getRaceTime()) + "</td></tr>";
+			        	response += "<td>" +i+"</td><td>"+(tempBib<0 ? String.format("%05d", -tempBib)+ "\t": tempBib+ "\t") + "</td><td>" + (index!=-1?racers.get(index).getName():"")+"</td><td>"+(e.dnf ? "DNF" : String.format("%.2f",e.getRaceTime())) + "</td></tr>";
 			        	response += "</tr>";
 			        	i++;
 			        }

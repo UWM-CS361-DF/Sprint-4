@@ -47,7 +47,8 @@ public class GrpEvent implements Event{
 	//endrun and set finish time
 	@Override
 	public void end() {
-		finishTime=Time.systemTime.getRunningTime();		
+		if(finishTime==0)
+			finishTime=Time.systemTime.getRunningTime();		
 	}
 	//if race is not ended dnf a race time  
 	@Override

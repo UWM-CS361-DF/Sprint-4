@@ -40,7 +40,7 @@ public class Simulator {
 		String stringTime;
 		
 		GUI gui = new GUI();
-		new Export(new IndEvent(), 0);
+		new Export(new IndEvent(), 0, "http://localhost:8000/sendresults");
 		gui.setTitle("ChronoTimer 1009");
 		gui.setSize(800,600);
 		gui.setVisible(true);

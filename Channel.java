@@ -35,7 +35,8 @@ public class Channel{
 	}
 	//disconnects the sensor replacing with null
 	public Sensor disc(){
-		sensorType.disc();
+		if(sensorType!=null)
+			sensorType.disc();
 		sensorType=null;
 		return sensorType;
 	}

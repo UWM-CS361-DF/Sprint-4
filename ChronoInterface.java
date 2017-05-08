@@ -1,11 +1,5 @@
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.gson.Gson;
 
 /******************************************************
 *The ChronoInterface class acts as a literal interface
@@ -27,6 +21,7 @@ public class ChronoInterface {
 	protected GUI gui;
 	protected boolean powerStatus;
 	private boolean printerPower;
+	protected String address="http://localhost:8000/sendresults";
 
 	public ChronoInterface(GUI gui){
 		channels.add(0,null);
@@ -84,8 +79,8 @@ public class ChronoInterface {
 	}
 	public void conn(String sensor, String channel){
 		//String sensorType="";
+		String sensorType=""+channels.get(Integer.parseInt(channel)).conn(sensor).getSensorType();
 		if(powerStatus){
-			String sensorType=""+channels.get(Integer.parseInt(channel)).conn(sensor).getSensorType();
 			if(!sensorType.equals(null))
 				println("Connected "+sensorType+" Sensor to Channel "+channel);
 			else
@@ -94,8 +89,8 @@ public class ChronoInterface {
 	}
 	public void disc(String channel){
 		Sensor sensorType;
+		sensorType=channels.get(Integer.parseInt(channel)).disc();
 		if(powerStatus){
-			sensorType=channels.get(Integer.parseInt(channel)).disc();
 			if(sensorType==null)
 				println("Disconnected Sensor from Channel "+channel);
 			else
@@ -104,6 +99,10 @@ public class ChronoInterface {
 	}
 	public void event(String type){
 		if(powerStatus){
+			if(!runInProgress){
+				println("Create New Run Before creating New Event");
+				return;
+			}
 			runs.remove(runNum);
 			switch (type) {
 			case "IND":
@@ -140,7 +139,7 @@ public class ChronoInterface {
 	public void endrun() throws Exception{
 		if(powerStatus){
 			runs.get(runNum).end();
-			new Export(runs.get(runNum),runNum);
+			new Export(runs.get(runNum),runNum,address);
 			runInProgress=false;
 			println("Ended Run "+(runNum));
 		}
@@ -150,13 +149,21 @@ public class ChronoInterface {
 			new Print(runs);
 	}
 	public void printer(){
-		printerPower=!printerPower;
-		println(printerPower? "Printer Powering On": "Printer Powering Off");
+		if(powerStatus){
+			printerPower=!printerPower;
+			println(printerPower? "Printer Powering On": "Printer Powering Off");
+		}
 	}
 	public void export(String run) throws Exception{
 		if(powerStatus){
-			new Export(runs.get(runNum),runNum);
+			new Export(runs.get(runNum),runNum,address);
 			runInProgress=false;
+		}
+	}
+	public void address(String address){
+		if(powerStatus){
+			this.address=address;
+			println("New Address is "+address);
 		}
 	}
 	public void num(String number){
