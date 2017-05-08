@@ -76,7 +76,10 @@ public class Server {
 			        	int index=racers.indexOf(e);
 			        	int tempBib=e.getCompetitorNumber();
 			        	response += "<tr>";
-			        	response += "<td>" +i+"</td><td>"+(tempBib<0 ? String.format("%05d", -tempBib)+ "\t": tempBib+ "\t") + "</td><td>" + (index!=-1?racers.get(index).getName():"")+"</td><td>"+(e.dnf ? "DNF" : String.format("%.2f",e.getRaceTime())) + "</td></tr>";
+			        	response += "<td>" +i+"</td><td>"+(tempBib<0 ? String.format("%05d", -tempBib)+ 
+			        			"\t": tempBib+ "\t") + "</td><td>" + (index!=-1?racers.get(index).getName():"")+
+			        			"</td><td>"+(e.dnf ? "DNF" : String.format("%.2f",e.getRaceTime())) + 
+			        			"</td></tr>";
 			        	response += "</tr>";
 			        	i++;
 			        }

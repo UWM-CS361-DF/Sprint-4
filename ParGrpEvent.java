@@ -38,11 +38,8 @@ public class ParGrpEvent implements Event{
 		if(startTime==0&&channel==1){
 			startTime=Time.systemTime.getRunningTime();
 			for(int i=0;i<8;i++){
-				//Competitor temp=startQueue.remove(0);
-				//if(temp!=null)
 				if(startQueue.get(i)!=null)
 					startQueue.get(i).setStartTime(Time.systemTime.getRunningTime());
-			//	finishQueue.add(i,temp);
 				}
 		}
 		else
@@ -75,24 +72,29 @@ public class ParGrpEvent implements Event{
 	//set finish time to DNF
 	@Override
 	public void dnf() {
-		Competitor temp;
-		int index=finishQueue.indexOf(null);
-		temp=startQueue.remove(index);
-		startQueue.add(index, null);
-		if(temp!=null){
-			temp.dnf=true;
-			finishQueue.remove(index);
-			finishQueue.add(index,temp);
-			completed.add(temp);
+		if(!startQueue.isEmpty()){
+			Competitor temp;
+			int index=finishQueue.indexOf(null);
+			temp=startQueue.remove(index);
+			startQueue.add(index, null);
+			if(temp!=null){
+				temp.dnf=true;
+				finishQueue.remove(index);
+				finishQueue.add(index,temp);
+				completed.add(temp);
+			}
 		}
 	}
 	//cancel the race. set start time to zero
 	@Override
-	public void cancel() {	
-		startTime=0;
-		startQueue = new ArrayList<Competitor>(8);
-		finishQueue = new ArrayList<Competitor>(8);
-		completed = new ArrayList<Competitor>(0);
+	public void cancel() {
+		if(completed.isEmpty()){
+			startTime=0;
+			for(int i=0;i<8;i++){
+				if(startQueue.get(i)!=null)
+					startQueue.get(i).setStartTime(Time.systemTime.getRunningTime());
+			}
+		}
 	}
 	//clear racer with bib number for the queue
 	@Override

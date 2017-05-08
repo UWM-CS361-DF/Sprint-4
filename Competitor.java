@@ -8,8 +8,8 @@
 
 public class Competitor implements Comparable<Object> {
 	private int competitorNo;
-	private double startTime;
-	private double finishTime;
+	private double startTime=0;
+	private double finishTime=0;
 	boolean dnf;
 	private String name;
 	
@@ -36,7 +36,7 @@ public class Competitor implements Comparable<Object> {
 		return finishTime;
 	}
 	public double getRaceTime(){
-		return Double.parseDouble(Time.systemTime.toString(finishTime-startTime));
+		return finishTime-startTime;
 	}
 	public int getCompetitorNumber(){
 		return competitorNo;

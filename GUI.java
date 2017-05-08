@@ -22,7 +22,7 @@ public class GUI extends JFrame{
 
 	private JTextArea printer,display;
 	private String[] sensorTypes = {"Gate", "Eye", "Pad", "Manual"};
-	private String[] sensors=new String[8];
+	private String[] sensors=new String[9];
 	private JRadioButton[] arm, jb;
 
 	public GUI(){
@@ -319,8 +319,9 @@ public class GUI extends JFrame{
 	//newrun
 	private class NewRunListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			if(!ChronoInterface.chronoTimer.runInProgress)
+				jb[0].setSelected(true);
 			ChronoInterface.chronoTimer.newrun();
-			jb[0].setSelected(true);
 		}
 	}
 	//endrun

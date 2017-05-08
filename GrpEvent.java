@@ -62,7 +62,8 @@ public class GrpEvent implements Event{
 	//cancel removes the last finish time
 	@Override
 	public void cancel() {
-		completed.remove(completed.size()-1);
+		if(!completed.isEmpty())
+			completed.remove(completed.size()-1);
 	}
 	//no clear for GRP event
 	@Override
@@ -94,7 +95,7 @@ public class GrpEvent implements Event{
 		if(!completed.isEmpty()){
 			int temp=completed.get(completed.size()-1).getCompetitorNumber();
 			finished=finished+ (temp<0 ? String.format("%05d", -temp)+ "\t": temp+ "\t");
-			finished=finished+Time.systemTime.toString(completed.get(completed.size()-1).getRaceTime());
+			finished=finished+(completed.get(completed.size()-1).dnf ? "DNF":Time.systemTime.toString((completed.get(completed.size()-1).getRaceTime())));
 		}
 		return running+finished;
 	}

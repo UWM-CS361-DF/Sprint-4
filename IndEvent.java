@@ -70,7 +70,8 @@ public class IndEvent implements Event{
 	 */
 	@Override
 	public void cancel(){
-		startQueue.add(0,finishQueue.remove(finishQueue.size()-1));
+		if(!finishQueue.isEmpty())
+			startQueue.add(0,finishQueue.remove(finishQueue.size()-1));
 	}
 	//return the event type
 	@Override

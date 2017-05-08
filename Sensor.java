@@ -32,8 +32,8 @@ public class Sensor {
 	public void setSensorType(SensorType sensorType) {
 		this.sensorType = sensorType;
 		sensor_UI = new Sensor_UI(channelNo, this);
-		sensor_UI.setTitle("Channel "+channelNo+" Sensor");
-		sensor_UI.setSize(300,200);
+		//sensor_UI.setTitle("Channel "+channelNo+" Sensor");
+		sensor_UI.setSize(300,100);
 		sensor_UI.setVisible(true);
 		sensor_UI.setResizable(false);
 	}
